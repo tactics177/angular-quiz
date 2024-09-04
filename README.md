@@ -1,4 +1,3 @@
 # AngularQuiz
 
-Ali LOUDAGH
-Roman SABECHKINE
+Ali LOUDAGH - Roman SABECHKINE
