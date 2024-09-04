@@ -1,33 +1,40 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
-import { AuthService } from "../auth/auth.service";
+import { Router } from '@angular/router';
+import { CategoryService } from '../shared/services/category.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  playerName = '';
-  isPlayerNameConfirmed = false;
+  playerName: string = '';
+  categories: any[] = [];
+  selectedCategoryId: number | null = null;
+  filter: string = '';
 
-  constructor(private router: Router, private authService: AuthService) { }
+  constructor(
+    private categoryService: CategoryService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    //Nous verrons plus tard comment gérer cela avec des observables
-    this.authService.isUserConnected();
-    this.playerName = this.authService.user?.username || '';
+    this.categoryService.getCategories().subscribe((data: any) => {
+      this.categories = data;
+    });
   }
 
-  get isPlayerNameFill() {
-    return this.playerName.length < 1;
+  selectCategory(categoryId: number): void {
+    this.selectedCategoryId = categoryId;
   }
 
-  navigateToQuiz() {
-    this.router.navigate(['/quiz', this.playerName]);
+  resetFilter(): void {
+    this.filter = '';
   }
 
-  confirmPseudo() {
-    this.isPlayerNameConfirmed = true;
+  navigateToQuiz(): void {
+    if (this.playerName && this.selectedCategoryId) {
+      this.router.navigate(['/quiz', this.selectedCategoryId, this.playerName]);
+    }
   }
 }

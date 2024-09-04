@@ -1,14 +1,35 @@
 <section class="home">
   <h2 class="home_title">Bienvenu sur ce quiz</h2>
   <p class="home_presentation">Ce quiz a pour but éducatif</p>
-  <form action="" class="home_form" *ngIf="!playerName.length || !isPlayerNameConfirmed">
-    <label for="name">Pseudo</label>
+
+  <!-- Player Name Input -->
+  <form class="home_form">
+    <label for="name" class="label-pseudo">Pseudo</label>
     <input type="text" id="name" name="name" placeholder="Entrez un pseudo" [(ngModel)]="playerName" required>
-    <button class="btn--icon" (click)="confirmPseudo()">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-      </svg>
-    </button>
   </form>
-  <button class="home_quiz-btn btn--outline" (click)="navigateToQuiz()" [disabled]="isPlayerNameFill">Démarrer</button>
+
+  <!-- Search and Category Cards Section -->
+  <div *ngIf="categories.length > 0">
+    <div class="search-container">
+      <label for="categorySearch" class="label-category">Rechercher une catégorie</label>
+      <input type="text" id="categorySearch" class="search-input" [(ngModel)]="filter" placeholder="Rechercher...">
+
+      <!-- Reset Button -->
+      <button class="reset-btn" (click)="resetFilter()">Réinitialiser</button>
+    </div>
+
+    <!-- Category Cards -->
+    <div class="category_list">
+      <div 
+        *ngFor="let category of categories | categoryFilter:filter" 
+        class="category_card" 
+        [ngClass]="{'selected': category.id === selectedCategoryId}" 
+        (click)="selectCategory(category.id)">
+        <h3>{{ category.name }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <button class="home_quiz-btn btn--outline" (click)="navigateToQuiz()" [disabled]="!playerName || !selectedCategoryId">Démarrer</button>
 </section>

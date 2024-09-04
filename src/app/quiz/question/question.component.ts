@@ -1,17 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { QuizService } from "../../shared/services/quiz.service";
+import { Component, OnInit, Input } from '@angular/core';
+import { QuizService } from '../../shared/services/quiz.service';
 
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
-  styleUrls: ['./question.component.scss']
+  styleUrls: ['./question.component.scss'],
 })
 export class QuestionComponent implements OnInit {
-  quizContent: any[] = this.quizService.quizContent;
+  @Input() categoryId!: number;
+  quizContent: any[] = [];
 
-  constructor(private quizService: QuizService) { }
+  constructor(private quizService: QuizService) {}
 
   ngOnInit(): void {
-    this.quizService.getQuizContent();
+    if (this.categoryId) {
+      this.quizService
+        .getQuestionsByCategory(this.categoryId)
+        .subscribe((questions: any) => {
+          this.quizContent = questions;
+          this.quizContent.forEach((question) => {
+            this.quizService
+              .getAnswersByQuestionId(question.id)
+              .subscribe((answers: any) => {
+                question.answers = answers;
+              });
+          });
+        });
+    }
   }
 }
